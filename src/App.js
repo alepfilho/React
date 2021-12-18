@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Produto from "./Produto";
 
-function App() {
+// Os links abaixo puxam dados de um produto em formato JSON
+// https://ranekapi.origamid.dev/json/api/produto/tablet
+// https://ranekapi.origamid.dev/json/api/produto/smartphone
+// https://ranekapi.origamid.dev/json/api/produto/notebook
+// Crie uma interface com 3 botões, um para cada produto.
+// Ao clicar no botão faça um fetch a api e mostre os dados do produto na tela.
+// Mostre apenas um produto por vez
+// Mostre a mensagem carregando... enquanto o fetch é realizado
+
+const App = () => {
+  const [dados, setDados] = React.useState(null)
+  const [loading, setloading] = React.useState(null)
+
+
+  async function puxarInfos(event) {
+    setloading(true);
+   const response =  await fetch(
+      `https://ranekapi.origamid.dev/json/api/produto/${event.target.innerText}`
+    );
+    const json = await response.json();
+    setDados(json);
+    setloading(false)
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <>
+    <button onClick={puxarInfos}>tablet</button>
+    <button onClick={puxarInfos}>smartphone</button>
+    <button onClick={puxarInfos}>notebook</button>
+    
+    {loading && <p>Carregando...</p>}
 
+    {!loading && dados && <Produto dados={dados} />}
+    </>
+  );
+};
 export default App;
